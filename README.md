@@ -32,7 +32,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 - `headers` - the list of table columns (array of objects). Each of them should be an object with following fields
   - `dataIndex` - the way to find an item from `data`
   - `sorter` - depends on value the column should be able to be sorted in `'asc'` | `'desc'` mode
-- `onScroll` - Callback, which fires when table is reached bottom. It should return new data
+- `onScroll` - callback, which fires when a table has reached the bottom. It should return new data
 - `onItemClick` - *optional*. Function will be called when an item is clicked (selected or unselected)
 - `onFilter` - *optional*. Will be called when table column title is clicked and for the column `sorter` is `true`, otherwise will sort by `'asc'` or `'desc'` modes.
 - `onRemoveItems` - *optional*. Calling this function after removing selected items
