@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, SetStateAction } from "react"
+import { IData } from "../table"
 
-export function useInfiniteScroll(fetchNewData: () => Promise<any>) {
+export function useInfiniteScroll(fetchNewData: () => Promise<any>, updateData: (value: SetStateAction<IData[]>) => void) {
   const [isFetching, setIsFething] = useState(false)
   const handleScroll = (e: Event) => {
     if (tableRef.current.scrollTop !== (tableRef.current.scrollHeight - tableRef.current.offsetHeight)) return
@@ -9,7 +10,8 @@ export function useInfiniteScroll(fetchNewData: () => Promise<any>) {
   useEffect(() => {
     if(!isFetching) return
     (async () => {
-      await fetchNewData()
+      const newData = await fetchNewData()
+      updateData(d=> [...d, ...newData])
       setIsFething(false)
     })()
   }, [isFetching])
@@ -24,5 +26,6 @@ export function useInfiniteScroll(fetchNewData: () => Promise<any>) {
   return {
     tableRef,
     isFetching,
+    setIsFething
   }
 }

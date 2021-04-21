@@ -21,7 +21,7 @@ export type IData = {
 export interface ICustomTable {
   data: IData[],
   headers: IHeaders[],
-  onScroll: () => Promise<void>
+  onScroll: () => Promise<IData[]>
   onItemClick?: (item: IData) => any,
   onRemoveItems?: (items: IData[]) => any
   onFilter?: (by: string, mode: mode) => any,
@@ -39,10 +39,13 @@ export const CustomTable: React.FC<ICustomTable> = ({ data, headers, ...handlers
     setSortedData(data)
   },[data])
   const { isSelectedAll, anySelected, selectAll, toggleSelectById, removeSelectedItems } = useSelect(sortedData, setSortedData)
+  const { isFetching, tableRef, setIsFething } = useInfiniteScroll(handlers.onScroll, setSortedData)
   const { filter, filterByColumn } = useFilter(setSortedData)
+  useEffect(() => {
+    if(!sortedData.length) setIsFething(true)
+  }, [sortedData])
 
-  const arrow = useMemo(() => filter.mode === 'asc' ? <i aria-hidden className="fas fa-chevron-up"></i> : <i aria-hidden className="fas fa-chevron-down"></i>, [filter.mode])
-
+  
   const handleFilter = (by: string) => {
     if (!headersObject[by].sorter) return
     if(handlers.onFilter) handlers.onFilter(by, filter.mode)
@@ -53,16 +56,16 @@ export const CustomTable: React.FC<ICustomTable> = ({ data, headers, ...handlers
     let removingItems = removeSelectedItems()
     if(handlers.onRemoveItems) handlers.onRemoveItems(removingItems)
   }
-
+  
   const handleItemClick = (id: string) => {
     let item: IData = toggleSelectById(id)
     if(handlers.onItemClick) handlers.onItemClick(item)
   }
-
-  const { isFetching, tableRef } = useInfiniteScroll(handlers.onScroll)
+  
+  const arrow = useMemo(() => filter.mode === 'asc' ? <i aria-hidden className="fas fa-chevron-up"></i> : <i aria-hidden className="fas fa-chevron-down"></i>, [filter.mode])
   return (
     <>
-      <div ref={tableRef} className="w-10/12 h-5/6 overflow-y-auto mx-auto shadow-2xl pb-3 rounded-md bg-gray-200 text-gray-900  ">
+      <div ref={tableRef} className="w-10/12 h-5/6 overflow-y-scroll mx-auto shadow-2xl pb-3 rounded-md bg-gray-200 text-gray-900  ">
         <table className="w-full h-20 table-auto relative">
           <thead>
               <tr>
@@ -90,7 +93,7 @@ export const CustomTable: React.FC<ICustomTable> = ({ data, headers, ...handlers
               {sortedData.map((row) => (
                 <tr className="group hover:bg-gray-50 hover:shadow-lg cursor-pointer" onClick={() => handleItemClick(row.id)} key={row.id}>
                   <td className=" w-16 text-center">
-                    <input name="select" id={row.id} defaultChecked={row.selected} type="checkbox" className="rounded-sm border-2 h-4 w-4 border-indigo-300"></input>
+                    <input name="select" id={row.id} onChange={() => {}} checked={row.selected} type="checkbox" className="rounded-sm border-2 h-4 w-4 border-indigo-300"></input>
                   </td>
                   {Object.keys(headersObject).map((dataIndex) => (
                     <td className="py-2 px-3" key={`${row.id} ${dataIndex}`}>{row[dataIndex]}</td>

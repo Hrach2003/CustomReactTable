@@ -17,16 +17,16 @@ export function useSelect(data: IData[], updateData: (value: SetStateAction<IDat
   const removeSelectedItems = () => {
     const removingItems = data.filter(el => el.selected === true)
     updateData(d => [...d.filter(el => el.selected !== true)])
+    setIsSelectedAll(false)
     return removingItems
   }
 
   const selectAll = () => {
-    updateData(d => {
-      return d.map(el => ({
+    updateData(d => [...d.map(el => ({
         ...el,
         selected: !isSelectedAll
       }))
-    }) 
+    ]) 
     setIsSelectedAll(s=>!s)
   }
   return {

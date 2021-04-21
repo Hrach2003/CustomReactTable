@@ -1,23 +1,22 @@
 import Head from "next/head";
 import { CustomTable } from "../components/table";
-import { useEffect, useMemo, useState } from "react";
 import { v4 as uuidv4 } from 'uuid';
 
 const headers = [
   {
-      "dataIndex": "name",
-      "title": "Name",
-      "sorter": false
+    "dataIndex": "name",
+    "title": "Name",
+    "sorter": false
   },
   {
-      "dataIndex": "rating",
-      "title": "Rating",
-      "sorter": true
+    "dataIndex": "rating",
+    "title": "Rating",
+    "sorter": true
   },
   {
-      "dataIndex": "forks",
-      "title": "Fork",
-      "sorter": true
+    "dataIndex": "forks",
+    "title": "Fork",
+    "sorter": true
   },
   {
     "dataIndex": "totalProjects",
@@ -49,12 +48,19 @@ function generateRandomData(len = 40) {
   }))
 }
 
-export default function Home() {
-  const [data, setData] = useState(() => generateRandomData()) 
+export const getStaticProps = () => {
+  return {
+    props: {
+      data: generateRandomData()
+    }
+  }
+}
+
+export default function Home({ data }) {
   const loadMore = async () => {
     const delay = (ms: number) => new Promise(res => setTimeout(res, ms))
     await delay(1000)
-    setData(d => [...d, ...generateRandomData()])
+    return generateRandomData()
   }  
   return <div className="h-screen bg-white flex items-center justify-center flex-col">
     <Head>
